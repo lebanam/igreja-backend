@@ -1,8 +1,6 @@
 package com.igreja360.backend.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Celula {
@@ -17,14 +15,6 @@ public class Celula {
     private String onde;
     private String lider;
     private String coLider;
-
-    @OneToMany
-    @JoinTable(
-            name = "celula_membros",
-            joinColumns = @JoinColumn(name = "celula_id"),
-            inverseJoinColumns = @JoinColumn(name = "membro_id")
-    )
-    private List<Membro> membros = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -54,10 +44,6 @@ public class Celula {
         return coLider;
     }
 
-    public List<Membro> getMembros() {
-        return membros;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -84,9 +70,5 @@ public class Celula {
 
     public void setCoLider(String coLider) {
         this.coLider = coLider;
-    }
-
-    public void setMembros(List<Membro> membros) {
-        this.membros = membros;
     }
 }

@@ -43,9 +43,27 @@ public class CelulaController {
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody CelulaRequest request) {
         Celula celula = new Celula();
-        preencherCelula(celula, request);
+
+        celula.setNome(request.getNome());
+        celula.setTema(request.getTema());
+        celula.setQuando(request.getQuando());
+        celula.setOnde(request.getOnde());
+        celula.setLider(request.getLider());
+        celula.setCoLider(request.getCoLider());
 
         Celula salva = celulaRepository.save(celula);
+
+        // Atualiza membros com o nome da célula
+        if (request.getMembrosIds() != null) {
+            List<Membro> membros = membroRepository.findAllById(request.getMembrosIds());
+
+            for (Membro m : membros) {
+                m.setGc(salva.getNome());
+            }
+
+            membroRepository.saveAll(membros);
+        }
+
         return ResponseEntity.ok(converterParaResponse(salva));
     }
 
@@ -53,8 +71,26 @@ public class CelulaController {
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody CelulaRequest request) {
         return celulaRepository.findById(id)
                 .map(celula -> {
-                    preencherCelula(celula, request);
+
+                    celula.setNome(request.getNome());
+                    celula.setTema(request.getTema());
+                    celula.setQuando(request.getQuando());
+                    celula.setOnde(request.getOnde());
+                    celula.setLider(request.getLider());
+                    celula.setCoLider(request.getCoLider());
+
                     Celula atualizada = celulaRepository.save(celula);
+
+                    if (request.getMembrosIds() != null) {
+                        List<Membro> membros = membroRepository.findAllById(request.getMembrosIds());
+
+                        for (Membro m : membros) {
+                            m.setGc(atualizada.getNome());
+                        }
+
+                        membroRepository.saveAll(membros);
+                    }
+
                     return ResponseEntity.ok(converterParaResponse(atualizada));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -70,20 +106,6 @@ public class CelulaController {
         return ResponseEntity.noContent().build();
     }
 
-    private void preencherCelula(Celula celula, CelulaRequest request) {
-        celula.setNome(request.getNome());
-        celula.setTema(request.getTema());
-        celula.setQuando(request.getQuando());
-        celula.setOnde(request.getOnde());
-        celula.setLider(request.getLider());
-        celula.setCoLider(request.getCoLider());
-
-        if (request.getMembrosIds() != null) {
-            List<Membro> membros = membroRepository.findAllById(request.getMembrosIds());
-            celula.setMembros(membros);
-        }
-    }
-
     private CelulaResponse converterParaResponse(Celula celula) {
         CelulaResponse response = new CelulaResponse();
 
@@ -95,7 +117,8 @@ public class CelulaController {
         response.setLider(celula.getLider());
         response.setCoLider(celula.getCoLider());
 
-        List<MembroResumoResponse> membros = celula.getMembros()
+        // Buscar membros pelo nome da célula
+        List<MembroResumoResponse> membros = membroRepository.findByGc(celula.getNome())
                 .stream()
                 .map(m -> {
                     MembroResumoResponse r = new MembroResumoResponse();
