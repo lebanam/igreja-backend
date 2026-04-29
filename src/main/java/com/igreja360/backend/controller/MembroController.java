@@ -1,9 +1,8 @@
 package com.igreja360.backend.controller;
+
 import com.igreja360.backend.dto.MembroResponse;
 import com.igreja360.backend.dto.MembroRequest;
-import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
-import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,30 +15,25 @@ import java.util.List;
 public class MembroController {
 
     private final MembroRepository membroRepository;
-    private final CelulaRepository celulaRepository;
 
-    public MembroController(MembroRepository membroRepository, CelulaRepository celulaRepository) {
+    public MembroController(MembroRepository membroRepository) {
         this.membroRepository = membroRepository;
-        this.celulaRepository = celulaRepository;
     }
 
-@GetMapping
-public List<MembroResponse> listar() {
-    return membroRepository.findAll().stream().map(m -> {
-        MembroResponse dto = new MembroResponse();
+    @GetMapping
+    public List<MembroResponse> listar() {
+        return membroRepository.findAll().stream().map(m -> {
+            MembroResponse dto = new MembroResponse();
 
-        dto.setId(m.getId());
-        dto.setNome(m.getNome());
-        dto.setEmail(m.getEmail());
-        dto.setTelefone(m.getTelefone());
+            dto.setId(m.getId());
+            dto.setNome(m.getNome());
+            dto.setEmail(m.getEmail());
+            dto.setTelefone(m.getTelefone());
+            dto.setGc(m.getGc()); // agora é string
 
-        if (m.getGc() != null) {
-            dto.setGc(m.getGc().getNome());
-        }
-
-        return dto;
-    }).toList();
-}
+            return dto;
+        }).toList();
+    }
 
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody MembroRequest request) {
@@ -60,12 +54,7 @@ public List<MembroResponse> listar() {
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
-
-        if (request.getGcId() != null) {
-            Celula gc = celulaRepository.findById(request.getGcId())
-                    .orElse(null);
-            membro.setGc(gc);
-        }
+        membro.setGc(request.getGc()); // agora string
 
         return ResponseEntity.ok(membroRepository.save(membro));
     }
@@ -81,14 +70,7 @@ public List<MembroResponse> listar() {
                     membro.setBatizado(request.getBatizado());
                     membro.setMembroDesde(request.getMembroDesde());
                     membro.setVoluntario(request.getVoluntario());
-
-                    if (request.getGcId() != null) {
-                        Celula gc = celulaRepository.findById(request.getGcId())
-                                .orElse(null);
-                        membro.setGc(gc);
-                    } else {
-                        membro.setGc(null);
-                    }
+                    membro.setGc(request.getGc()); // agora string
 
                     return ResponseEntity.ok(membroRepository.save(membro));
                 })

@@ -26,81 +26,25 @@ public class Membro {
 
     private Boolean voluntario;
 
-    @ManyToOne
-    @JoinColumn(name = "gc_id")
-    private Celula gc;
+    private String gc; // ✅ AGORA STRING
 
-    // ===== GETTERS E SETTERS =====
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public String getEmail() { return email; }
+    public String getCpf() { return cpf; }
+    public String getTelefone() { return telefone; }
+    public Boolean getBatizado() { return batizado; }
+    public LocalDate getMembroDesde() { return membroDesde; }
+    public Boolean getVoluntario() { return voluntario; }
+    public String getGc() { return gc; }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public Boolean getBatizado() {
-        return batizado;
-    }
-
-    public LocalDate getMembroDesde() {
-        return membroDesde;
-    }
-
-    public Boolean getVoluntario() {
-        return voluntario;
-    }
-
-    public Celula getGc() {
-        return gc;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public void setBatizado(Boolean batizado) {
-        this.batizado = batizado;
-    }
-
-    public void setMembroDesde(LocalDate membroDesde) {
-        this.membroDesde = membroDesde;
-    }
-
-    public void setVoluntario(Boolean voluntario) {
-        this.voluntario = voluntario;
-    }
-
-    public void setGc(Celula gc) {
-        this.gc = gc;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEmail(String email) { this.email = email; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+    public void setBatizado(Boolean batizado) { this.batizado = batizado; }
+    public void setMembroDesde(LocalDate membroDesde) { this.membroDesde = membroDesde; }
+    public void setVoluntario(Boolean voluntario) { this.voluntario = voluntario; }
+    public void setGc(String gc) { this.gc = gc; }
 }

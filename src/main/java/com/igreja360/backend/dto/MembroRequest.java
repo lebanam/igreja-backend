@@ -10,7 +10,7 @@ public class MembroRequest {
     private String telefone;
     private Boolean batizado;
     private LocalDate membroDesde;
-    private Long gcId;
+    private String gc; // <-- ALTERADO AQUI
     private Boolean voluntario;
 
     public String getNome() { return nome; }
@@ -19,7 +19,7 @@ public class MembroRequest {
     public String getTelefone() { return telefone; }
     public Boolean getBatizado() { return batizado; }
     public LocalDate getMembroDesde() { return membroDesde; }
-    public Long getGcId() { return gcId; }
+    public String getGc() { return gc; } // <-- ALTERADO
     public Boolean getVoluntario() { return voluntario; }
 
     public void setNome(String nome) { this.nome = nome; }
@@ -28,6 +28,6 @@ public class MembroRequest {
     public void setTelefone(String telefone) { this.telefone = telefone; }
     public void setBatizado(Boolean batizado) { this.batizado = batizado; }
     public void setMembroDesde(LocalDate membroDesde) { this.membroDesde = membroDesde; }
-    public void setGcId(Long gcId) { this.gcId = gcId; }
+    public void setGc(String gc) { this.gc = gc; } // <-- ALTERADO
     public void setVoluntario(Boolean voluntario) { this.voluntario = voluntario; }
 }
