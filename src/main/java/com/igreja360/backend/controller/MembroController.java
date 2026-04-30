@@ -33,8 +33,8 @@ public List<MembroResponse> listar() {
         dto.setEmail(m.getEmail());
         dto.setTelefone(m.getTelefone());
 
-        if (m.getCelula() != null) {
-            dto.setGc(m.getCelula().getNome());
+        if (m.getGc() != null) {
+            dto.setGc(m.getGc().getNome());
         }
 
         return dto;
