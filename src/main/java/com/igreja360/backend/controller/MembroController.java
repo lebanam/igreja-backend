@@ -1,5 +1,5 @@
 package com.igreja360.backend.controller;
-
+import com.igreja360.backend.dto.MembroResponse;
 import com.igreja360.backend.dto.MembroRequest;
 import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
