@@ -1,6 +1,5 @@
 package com.igreja360.backend.model;
 
-import com.igreja360.backend.model.Membro;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,9 @@ public class Celula {
     private Long id;
 
     private String nome;
-    private String faixaEtaria;
+    private String tema;
+    private String quando;
+    private String onde;
     private String lider;
     private String coLider;
 
@@ -33,8 +34,16 @@ public class Celula {
         return nome;
     }
 
-    public String getFaixaEtaria() {
-        return faixaEtaria;
+    public String getTema() {
+        return tema;
+    }
+
+    public String getQuando() {
+        return quando;
+    }
+
+    public String getOnde() {
+        return onde;
     }
 
     public String getLider() {
@@ -57,8 +66,16 @@ public class Celula {
         this.nome = nome;
     }
 
-    public void setFaixaEtaria(String faixaEtaria) {
-        this.faixaEtaria = faixaEtaria;
+    public void setTema(String tema) {
+        this.tema = tema;
+    }
+
+    public void setQuando(String quando) {
+        this.quando = quando;
+    }
+
+    public void setOnde(String onde) {
+        this.onde = onde;
     }
 
     public void setLider(String lider) {
