@@ -1,3 +1,5 @@
+package com.igreja360.backend.dto;
+
 public class MembroResponse {
 
     private Long id;
