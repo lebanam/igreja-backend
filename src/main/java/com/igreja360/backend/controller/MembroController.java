@@ -23,10 +23,23 @@ public class MembroController {
         this.celulaRepository = celulaRepository;
     }
 
-    @GetMapping
-    public List<Membro> listar() {
-        return membroRepository.findAll();
-    }
+@GetMapping
+public List<MembroResponse> listar() {
+    return membroRepository.findAll().stream().map(m -> {
+        MembroResponse dto = new MembroResponse();
+
+        dto.setId(m.getId());
+        dto.setNome(m.getNome());
+        dto.setEmail(m.getEmail());
+        dto.setTelefone(m.getTelefone());
+
+        if (m.getCelula() != null) {
+            dto.setGc(m.getCelula().getNome());
+        }
+
+        return dto;
+    }).toList();
+}
 
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody MembroRequest request) {
