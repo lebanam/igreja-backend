@@ -40,7 +40,9 @@ public class CelulaController {
         Celula celula = new Celula();
 
         celula.setNome(request.getNome());
-        celula.setFaixaEtaria(request.getFaixaEtaria());
+        celula.setTema(request.getTema());
+        celula.setQuando(request.getQuando());
+        celula.setOnde(request.getOnde());
         celula.setLider(request.getLider());
         celula.setCoLider(request.getCoLider());
 
@@ -49,7 +51,8 @@ public class CelulaController {
             celula.setMembros(membros);
         }
 
-        return ResponseEntity.ok(celulaRepository.save(celula));
+        Celula celulaSalva = celulaRepository.save(celula);
+        return ResponseEntity.ok(celulaSalva);
     }
 
     @PutMapping("/{id}")
@@ -57,7 +60,9 @@ public class CelulaController {
         return celulaRepository.findById(id)
                 .map(celula -> {
                     celula.setNome(request.getNome());
-                    celula.setFaixaEtaria(request.getFaixaEtaria());
+                    celula.setTema(request.getTema());
+                    celula.setQuando(request.getQuando());
+                    celula.setOnde(request.getOnde());
                     celula.setLider(request.getLider());
                     celula.setCoLider(request.getCoLider());
 
