@@ -5,6 +5,7 @@ import com.igreja360.backend.dto.CelulaResponse;
 import com.igreja360.backend.dto.CelulaResumoResponse;
 import com.igreja360.backend.dto.MembroResumoResponse;
 import com.igreja360.backend.model.Celula;
+import com.igreja360.backend.model.Membro;
 import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
@@ -90,11 +91,21 @@ public class CelulaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
-        if (!celulaRepository.existsById(id)) {
+        Celula celula = celulaRepository.findById(id).orElse(null);
+
+        if (celula == null) {
             return ResponseEntity.notFound().build();
         }
 
-        celulaRepository.deleteById(id);
+        List<Membro> membros = membroRepository.findByCelulaId(id);
+
+        for (Membro membro : membros) {
+            membro.setCelula(null);
+        }
+
+        membroRepository.saveAll(membros);
+        celulaRepository.delete(celula);
+
         return ResponseEntity.noContent().build();
     }
 

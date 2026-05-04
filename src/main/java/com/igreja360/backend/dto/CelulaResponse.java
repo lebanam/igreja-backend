@@ -14,20 +14,34 @@ public class CelulaResponse {
     private List<MembroResumoResponse> membros;
 
     public Long getId() { return id; }
+
     public String getNome() { return nome; }
+
     public String getTema() { return tema; }
+
     public String getQuando() { return quando; }
+
     public String getOnde() { return onde; }
+
     public String getLider() { return lider; }
+
     public String getCoLider() { return coLider; }
+
     public List<MembroResumoResponse> getMembros() { return membros; }
 
     public void setId(Long id) { this.id = id; }
+
     public void setNome(String nome) { this.nome = nome; }
+
     public void setTema(String tema) { this.tema = tema; }
+
     public void setQuando(String quando) { this.quando = quando; }
+
     public void setOnde(String onde) { this.onde = onde; }
+
     public void setLider(String lider) { this.lider = lider; }
+
     public void setCoLider(String coLider) { this.coLider = coLider; }
+
     public void setMembros(List<MembroResumoResponse> membros) { this.membros = membros; }
 }
