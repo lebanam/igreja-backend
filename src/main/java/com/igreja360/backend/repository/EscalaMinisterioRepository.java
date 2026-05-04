@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface EscalaMinisterioRepository extends JpaRepository<EscalaMinisterio, Long> {
 
-    List<EscalaMinisterio> findByMinisterioIdOrderByDataAscHorarioAsc(Long ministerioId);
+    List<EscalaMinisterio> findByMinisterio_IdOrderByDataAscHorarioAsc(Long ministerioId);
 }
