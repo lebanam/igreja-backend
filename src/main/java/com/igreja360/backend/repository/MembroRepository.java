@@ -10,5 +10,5 @@ public interface MembroRepository extends JpaRepository<Membro, Long> {
     boolean existsByCpf(String cpf);
     boolean existsByEmail(String email);
 
-    List<Membro> findByGc(String gc); // ✅ ESSA LINHA É A CHAVE
+
 }

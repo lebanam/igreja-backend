@@ -2,11 +2,8 @@ package com.igreja360.backend.controller;
 
 import com.igreja360.backend.dto.CelulaRequest;
 import com.igreja360.backend.dto.CelulaResponse;
-import com.igreja360.backend.dto.MembroResumoResponse;
 import com.igreja360.backend.model.Celula;
-import com.igreja360.backend.model.Membro;
 import com.igreja360.backend.repository.CelulaRepository;
-import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +15,9 @@ import java.util.List;
 public class CelulaController {
 
     private final CelulaRepository celulaRepository;
-    private final MembroRepository membroRepository;
 
-    public CelulaController(CelulaRepository celulaRepository, MembroRepository membroRepository) {
+    public CelulaController(CelulaRepository celulaRepository) {
         this.celulaRepository = celulaRepository;
-        this.membroRepository = membroRepository;
     }
 
     @GetMapping
@@ -36,7 +31,7 @@ public class CelulaController {
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         return celulaRepository.findById(id)
-                .map(c -> ResponseEntity.ok(converterParaResponse(c)))
+                .map(celula -> ResponseEntity.ok(converterParaResponse(celula)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -53,25 +48,16 @@ public class CelulaController {
 
         Celula salva = celulaRepository.save(celula);
 
-        // Atualiza membros com o nome da célula
-        if (request.getMembrosIds() != null) {
-            List<Membro> membros = membroRepository.findAllById(request.getMembrosIds());
-
-            for (Membro m : membros) {
-                m.setGc(salva.getNome());
-            }
-
-            membroRepository.saveAll(membros);
-        }
-
         return ResponseEntity.ok(converterParaResponse(salva));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody CelulaRequest request) {
+    public ResponseEntity<?> atualizar(
+            @PathVariable Long id,
+            @RequestBody CelulaRequest request
+    ) {
         return celulaRepository.findById(id)
                 .map(celula -> {
-
                     celula.setNome(request.getNome());
                     celula.setTema(request.getTema());
                     celula.setQuando(request.getQuando());
@@ -80,16 +66,6 @@ public class CelulaController {
                     celula.setCoLider(request.getCoLider());
 
                     Celula atualizada = celulaRepository.save(celula);
-
-                    if (request.getMembrosIds() != null) {
-                        List<Membro> membros = membroRepository.findAllById(request.getMembrosIds());
-
-                        for (Membro m : membros) {
-                            m.setGc(atualizada.getNome());
-                        }
-
-                        membroRepository.saveAll(membros);
-                    }
 
                     return ResponseEntity.ok(converterParaResponse(atualizada));
                 })
@@ -117,18 +93,7 @@ public class CelulaController {
         response.setLider(celula.getLider());
         response.setCoLider(celula.getCoLider());
 
-        // Buscar membros pelo nome da célula
-        List<MembroResumoResponse> membros = membroRepository.findByGc(celula.getNome())
-                .stream()
-                .map(m -> {
-                    MembroResumoResponse r = new MembroResumoResponse();
-                    r.setId(m.getId());
-                    r.setNome(m.getNome());
-                    return r;
-                })
-                .toList();
-
-        response.setMembros(membros);
+        response.setMembros(List.of());
 
         return response;
     }
