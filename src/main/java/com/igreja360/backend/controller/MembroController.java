@@ -1,8 +1,11 @@
 package com.igreja360.backend.controller;
 
-import com.igreja360.backend.dto.MembroResponse;
+import com.igreja360.backend.dto.CelulaResumoResponse;
 import com.igreja360.backend.dto.MembroRequest;
+import com.igreja360.backend.dto.MembroResponse;
+import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
+import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,28 +18,19 @@ import java.util.List;
 public class MembroController {
 
     private final MembroRepository membroRepository;
+    private final CelulaRepository celulaRepository;
 
-    public MembroController(MembroRepository membroRepository) {
+    public MembroController(MembroRepository membroRepository, CelulaRepository celulaRepository) {
         this.membroRepository = membroRepository;
+        this.celulaRepository = celulaRepository;
     }
 
     @GetMapping
     public List<MembroResponse> listar() {
-        return membroRepository.findAll().stream().map(m -> {
-            MembroResponse dto = new MembroResponse();
-
-            dto.setId(m.getId());
-            dto.setNome(m.getNome());
-            dto.setEmail(m.getEmail());
-            dto.setCpf(m.getCpf());
-            dto.setTelefone(m.getTelefone());
-            dto.setBatizado(m.getBatizado());
-            dto.setMembroDesde(m.getMembroDesde());
-            dto.setTemCelula(m.getTemCelula());
-            dto.setVoluntario(m.getVoluntario());
-
-            return dto;
-        }).toList();
+        return membroRepository.findAll()
+                .stream()
+                .map(this::converterParaResponse)
+                .toList();
     }
 
     @PostMapping
@@ -57,35 +51,54 @@ public class MembroController {
         membro.setTelefone(request.getTelefone());
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
-        membro.setTemCelula(request.getTemCelula());
         membro.setVoluntario(request.getVoluntario());
+
+        if (request.getCelulaId() != null) {
+            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
+
+            if (celula == null) {
+                return ResponseEntity.badRequest().body("Célula não encontrada");
+            }
+
+            membro.setCelula(celula);
+        }
 
         Membro membroSalvo = membroRepository.save(membro);
 
-        return ResponseEntity.ok(membroSalvo);
+        return ResponseEntity.ok(converterParaResponse(membroSalvo));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(
-            @PathVariable Long id,
-            @RequestBody MembroRequest request
-    ) {
-        return membroRepository.findById(id)
-                .map(membro -> {
-                    membro.setNome(request.getNome());
-                    membro.setEmail(request.getEmail());
-                    membro.setCpf(request.getCpf());
-                    membro.setTelefone(request.getTelefone());
-                    membro.setBatizado(request.getBatizado());
-                    membro.setMembroDesde(request.getMembroDesde());
-                    membro.setTemCelula(request.getTemCelula());
-                    membro.setVoluntario(request.getVoluntario());
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody MembroRequest request) {
+        Membro membro = membroRepository.findById(id).orElse(null);
 
-                    Membro membroAtualizado = membroRepository.save(membro);
+        if (membro == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-                    return ResponseEntity.ok(membroAtualizado);
-                })
-                .orElse(ResponseEntity.notFound().build());
+        membro.setNome(request.getNome());
+        membro.setEmail(request.getEmail());
+        membro.setCpf(request.getCpf());
+        membro.setTelefone(request.getTelefone());
+        membro.setBatizado(request.getBatizado());
+        membro.setMembroDesde(request.getMembroDesde());
+        membro.setVoluntario(request.getVoluntario());
+
+        if (request.getCelulaId() != null) {
+            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
+
+            if (celula == null) {
+                return ResponseEntity.badRequest().body("Célula não encontrada");
+            }
+
+            membro.setCelula(celula);
+        } else {
+            membro.setCelula(null);
+        }
+
+        Membro membroAtualizado = membroRepository.save(membro);
+
+        return ResponseEntity.ok(converterParaResponse(membroAtualizado));
     }
 
     @DeleteMapping("/{id}")
@@ -96,5 +109,27 @@ public class MembroController {
 
         membroRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private MembroResponse converterParaResponse(Membro membro) {
+        MembroResponse dto = new MembroResponse();
+
+        dto.setId(membro.getId());
+        dto.setNome(membro.getNome());
+        dto.setEmail(membro.getEmail());
+        dto.setCpf(membro.getCpf());
+        dto.setTelefone(membro.getTelefone());
+        dto.setBatizado(membro.getBatizado());
+        dto.setMembroDesde(membro.getMembroDesde());
+        dto.setVoluntario(membro.getVoluntario());
+
+        if (membro.getCelula() != null) {
+            dto.setCelula(new CelulaResumoResponse(
+                    membro.getCelula().getId(),
+                    membro.getCelula().getNome()
+            ));
+        }
+
+        return dto;
     }
 }

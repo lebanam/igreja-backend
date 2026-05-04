@@ -2,8 +2,11 @@ package com.igreja360.backend.controller;
 
 import com.igreja360.backend.dto.CelulaRequest;
 import com.igreja360.backend.dto.CelulaResponse;
+import com.igreja360.backend.dto.CelulaResumoResponse;
+import com.igreja360.backend.dto.MembroResumoResponse;
 import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.repository.CelulaRepository;
+import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +18,14 @@ import java.util.List;
 public class CelulaController {
 
     private final CelulaRepository celulaRepository;
+    private final MembroRepository membroRepository;
 
-    public CelulaController(CelulaRepository celulaRepository) {
+    public CelulaController(
+            CelulaRepository celulaRepository,
+            MembroRepository membroRepository
+    ) {
         this.celulaRepository = celulaRepository;
+        this.membroRepository = membroRepository;
     }
 
     @GetMapping
@@ -25,6 +33,14 @@ public class CelulaController {
         return celulaRepository.findAll()
                 .stream()
                 .map(this::converterParaResponse)
+                .toList();
+    }
+
+    @GetMapping("/resumo")
+    public List<CelulaResumoResponse> listarResumo() {
+        return celulaRepository.findAll()
+                .stream()
+                .map(c -> new CelulaResumoResponse(c.getId(), c.getNome()))
                 .toList();
     }
 
@@ -93,7 +109,18 @@ public class CelulaController {
         response.setLider(celula.getLider());
         response.setCoLider(celula.getCoLider());
 
-        response.setMembros(List.of());
+        List<MembroResumoResponse> membros = membroRepository
+                .findByCelulaId(celula.getId())
+                .stream()
+                .map(m -> {
+                    MembroResumoResponse r = new MembroResumoResponse();
+                    r.setId(m.getId());
+                    r.setNome(m.getNome());
+                    return r;
+                })
+                .toList();
+
+        response.setMembros(membros);
 
         return response;
     }

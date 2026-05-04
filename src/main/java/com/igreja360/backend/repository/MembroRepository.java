@@ -8,7 +8,8 @@ import java.util.List;
 public interface MembroRepository extends JpaRepository<Membro, Long> {
 
     boolean existsByCpf(String cpf);
+
     boolean existsByEmail(String email);
 
-
+    List<Membro> findByCelulaId(Long celulaId);
 }

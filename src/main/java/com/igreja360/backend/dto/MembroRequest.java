@@ -10,7 +10,7 @@ public class MembroRequest {
     private String telefone;
     private Boolean batizado;
     private LocalDate membroDesde;
-    private Boolean temCelula; // ✅ NOVO CAMPO
+    private Long celulaId; // ✅ CORRETO
     private Boolean voluntario;
 
     public String getNome() { return nome; }
@@ -19,7 +19,7 @@ public class MembroRequest {
     public String getTelefone() { return telefone; }
     public Boolean getBatizado() { return batizado; }
     public LocalDate getMembroDesde() { return membroDesde; }
-    public Boolean getTemCelula() { return temCelula; }
+    public Long getCelulaId() { return celulaId; }
     public Boolean getVoluntario() { return voluntario; }
 
     public void setNome(String nome) { this.nome = nome; }
@@ -28,6 +28,6 @@ public class MembroRequest {
     public void setTelefone(String telefone) { this.telefone = telefone; }
     public void setBatizado(Boolean batizado) { this.batizado = batizado; }
     public void setMembroDesde(LocalDate membroDesde) { this.membroDesde = membroDesde; }
-    public void setTemCelula(Boolean temCelula) { this.temCelula = temCelula; }
+    public void setCelulaId(Long celulaId) { this.celulaId = celulaId; }
     public void setVoluntario(Boolean voluntario) { this.voluntario = voluntario; }
 }
