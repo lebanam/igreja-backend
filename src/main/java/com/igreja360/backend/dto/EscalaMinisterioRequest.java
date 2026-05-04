@@ -2,6 +2,7 @@ package com.igreja360.backend.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class EscalaMinisterioRequest {
 
@@ -11,6 +12,9 @@ public class EscalaMinisterioRequest {
     private String textoEscala;
     private String observacoes;
     private Long ministerioId;
+
+    // ✅ NOVO
+    private List<EscalaParticipanteRequest> participantes;
 
     public EscalaMinisterioRequest() {
     }
@@ -39,6 +43,11 @@ public class EscalaMinisterioRequest {
         return ministerioId;
     }
 
+    // ✅ NOVO
+    public List<EscalaParticipanteRequest> getParticipantes() {
+        return participantes;
+    }
+
     public void setData(LocalDate data) {
         this.data = data;
     }
@@ -61,5 +70,10 @@ public class EscalaMinisterioRequest {
 
     public void setMinisterioId(Long ministerioId) {
         this.ministerioId = ministerioId;
+    }
+
+    // ✅ NOVO
+    public void setParticipantes(List<EscalaParticipanteRequest> participantes) {
+        this.participantes = participantes;
     }
 }

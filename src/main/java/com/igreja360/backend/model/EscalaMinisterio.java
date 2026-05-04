@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "escalas_ministerio")
@@ -31,11 +33,15 @@ public class EscalaMinisterio {
     @JoinColumn(name = "ministerio_id", nullable = false)
     private Ministerio ministerio;
 
+    @OneToMany(mappedBy = "escalaMinisterio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EscalaParticipante> participantes = new ArrayList<>();
+
     public EscalaMinisterio() {
     }
 
     public EscalaMinisterio(Long id, LocalDate data, LocalTime horario, String titulo,
-                            String textoEscala, String observacoes, Ministerio ministerio) {
+                            String textoEscala, String observacoes, Ministerio ministerio,
+                            List<EscalaParticipante> participantes) {
         this.id = id;
         this.data = data;
         this.horario = horario;
@@ -43,6 +49,7 @@ public class EscalaMinisterio {
         this.textoEscala = textoEscala;
         this.observacoes = observacoes;
         this.ministerio = ministerio;
+        this.participantes = participantes;
     }
 
     public Long getId() {
@@ -73,6 +80,10 @@ public class EscalaMinisterio {
         return ministerio;
     }
 
+    public List<EscalaParticipante> getParticipantes() {
+        return participantes;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -99,5 +110,9 @@ public class EscalaMinisterio {
 
     public void setMinisterio(Ministerio ministerio) {
         this.ministerio = ministerio;
+    }
+
+    public void setParticipantes(List<EscalaParticipante> participantes) {
+        this.participantes = participantes;
     }
 }
