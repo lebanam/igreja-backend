@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/membros")
@@ -95,6 +96,38 @@ public class MembroController {
         } else {
             membro.setCelula(null);
         }
+
+        Membro membroAtualizado = membroRepository.save(membro);
+
+        return ResponseEntity.ok(converterParaResponse(membroAtualizado));
+    }
+
+    @PatchMapping("/{id}/celula")
+    public ResponseEntity<?> atualizarCelula(
+            @PathVariable Long id,
+            @RequestBody Map<String, Long> request
+    ) {
+        Membro membro = membroRepository.findById(id).orElse(null);
+
+        if (membro == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Long celulaId = request.get("celulaId");
+
+        if (celulaId == null) {
+            membro.setCelula(null);
+            Membro membroAtualizado = membroRepository.save(membro);
+            return ResponseEntity.ok(converterParaResponse(membroAtualizado));
+        }
+
+        Celula celula = celulaRepository.findById(celulaId).orElse(null);
+
+        if (celula == null) {
+            return ResponseEntity.badRequest().body("Célula não encontrada");
+        }
+
+        membro.setCelula(celula);
 
         Membro membroAtualizado = membroRepository.save(membro);
 
