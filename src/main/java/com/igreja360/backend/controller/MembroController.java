@@ -28,8 +28,12 @@ public class MembroController {
             dto.setId(m.getId());
             dto.setNome(m.getNome());
             dto.setEmail(m.getEmail());
+            dto.setCpf(m.getCpf());
             dto.setTelefone(m.getTelefone());
-            dto.setGc(m.getGc()); // agora é string
+            dto.setBatizado(m.getBatizado());
+            dto.setMembroDesde(m.getMembroDesde());
+            dto.setTemCelula(m.getTemCelula());
+            dto.setVoluntario(m.getVoluntario());
 
             return dto;
         }).toList();
@@ -53,14 +57,19 @@ public class MembroController {
         membro.setTelefone(request.getTelefone());
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
+        membro.setTemCelula(request.getTemCelula());
         membro.setVoluntario(request.getVoluntario());
-        membro.setGc(request.getGc()); // agora string
 
-        return ResponseEntity.ok(membroRepository.save(membro));
+        Membro membroSalvo = membroRepository.save(membro);
+
+        return ResponseEntity.ok(membroSalvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody MembroRequest request) {
+    public ResponseEntity<?> atualizar(
+            @PathVariable Long id,
+            @RequestBody MembroRequest request
+    ) {
         return membroRepository.findById(id)
                 .map(membro -> {
                     membro.setNome(request.getNome());
@@ -69,10 +78,12 @@ public class MembroController {
                     membro.setTelefone(request.getTelefone());
                     membro.setBatizado(request.getBatizado());
                     membro.setMembroDesde(request.getMembroDesde());
+                    membro.setTemCelula(request.getTemCelula());
                     membro.setVoluntario(request.getVoluntario());
-                    membro.setGc(request.getGc()); // agora string
 
-                    return ResponseEntity.ok(membroRepository.save(membro));
+                    Membro membroAtualizado = membroRepository.save(membro);
+
+                    return ResponseEntity.ok(membroAtualizado);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

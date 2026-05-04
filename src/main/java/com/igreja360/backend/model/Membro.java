@@ -1,6 +1,7 @@
 package com.igreja360.backend.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -26,7 +27,7 @@ public class Membro {
 
     private Boolean voluntario;
 
-    private String gc; // ✅ AGORA STRING
+    private Boolean temCelula; // ✅ NOVO CAMPO
 
     public Long getId() { return id; }
     public String getNome() { return nome; }
@@ -36,7 +37,7 @@ public class Membro {
     public Boolean getBatizado() { return batizado; }
     public LocalDate getMembroDesde() { return membroDesde; }
     public Boolean getVoluntario() { return voluntario; }
-    public String getGc() { return gc; }
+    public Boolean getTemCelula() { return temCelula; }
 
     public void setId(Long id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
@@ -46,5 +47,5 @@ public class Membro {
     public void setBatizado(Boolean batizado) { this.batizado = batizado; }
     public void setMembroDesde(LocalDate membroDesde) { this.membroDesde = membroDesde; }
     public void setVoluntario(Boolean voluntario) { this.voluntario = voluntario; }
-    public void setGc(String gc) { this.gc = gc; }
+    public void setTemCelula(Boolean temCelula) { this.temCelula = temCelula; }
 }
