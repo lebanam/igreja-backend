@@ -10,6 +10,8 @@ import com.igreja360.backend.repository.MembroRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,10 @@ public class MembroController {
         membro.setEmail(request.getEmail());
         membro.setCpf(request.getCpf());
         membro.setTelefone(request.getTelefone());
+        membro.setDataNascimento(request.getDataNascimento());
+        membro.setSexo(request.getSexo());
+        membro.setEstadoCivil(request.getEstadoCivil());
+        membro.setEndereco(request.getEndereco());
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
@@ -81,6 +87,10 @@ public class MembroController {
         membro.setEmail(request.getEmail());
         membro.setCpf(request.getCpf());
         membro.setTelefone(request.getTelefone());
+        membro.setDataNascimento(request.getDataNascimento());
+        membro.setSexo(request.getSexo());
+        membro.setEstadoCivil(request.getEstadoCivil());
+        membro.setEndereco(request.getEndereco());
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
@@ -152,6 +162,19 @@ public class MembroController {
         dto.setEmail(membro.getEmail());
         dto.setCpf(membro.getCpf());
         dto.setTelefone(membro.getTelefone());
+
+        dto.setDataNascimento(membro.getDataNascimento());
+        dto.setSexo(membro.getSexo());
+        dto.setEstadoCivil(membro.getEstadoCivil());
+        dto.setEndereco(membro.getEndereco());
+
+        if (membro.getDataNascimento() != null) {
+            dto.setIdade(Period.between(
+                    membro.getDataNascimento(),
+                    LocalDate.now()
+            ).getYears());
+        }
+
         dto.setBatizado(membro.getBatizado());
         dto.setMembroDesde(membro.getMembroDesde());
         dto.setVoluntario(membro.getVoluntario());
