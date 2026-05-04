@@ -8,6 +8,7 @@ import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
 import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.MembroRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,25 +48,34 @@ public class CelulaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        return celulaRepository.findById(id)
-                .map(celula -> ResponseEntity.ok(converterParaResponse(celula)))
-                .orElse(ResponseEntity.notFound().build());
+        Celula celula = celulaRepository.findById(id).orElse(null);
+
+        if (celula == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(converterParaResponse(celula));
     }
 
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody CelulaRequest request) {
-        Celula celula = new Celula();
+        try {
+            Celula celula = new Celula();
 
-        celula.setNome(request.getNome());
-        celula.setTema(request.getTema());
-        celula.setQuando(request.getQuando());
-        celula.setOnde(request.getOnde());
-        celula.setLider(request.getLider());
-        celula.setCoLider(request.getCoLider());
+            celula.setNome(request.getNome());
+            celula.setTema(request.getTema());
+            celula.setQuando(request.getQuando());
+            celula.setOnde(request.getOnde());
+            celula.setLider(request.getLider());
+            celula.setCoLider(request.getCoLider());
 
-        Celula salva = celulaRepository.save(celula);
+            Celula salva = celulaRepository.save(celula);
 
-        return ResponseEntity.ok(converterParaResponse(salva));
+            return ResponseEntity.ok(converterParaResponse(salva));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Erro ao criar célula: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -73,40 +83,53 @@ public class CelulaController {
             @PathVariable Long id,
             @RequestBody CelulaRequest request
     ) {
-        return celulaRepository.findById(id)
-                .map(celula -> {
-                    celula.setNome(request.getNome());
-                    celula.setTema(request.getTema());
-                    celula.setQuando(request.getQuando());
-                    celula.setOnde(request.getOnde());
-                    celula.setLider(request.getLider());
-                    celula.setCoLider(request.getCoLider());
+        try {
+            Celula celula = celulaRepository.findById(id).orElse(null);
 
-                    Celula atualizada = celulaRepository.save(celula);
+            if (celula == null) {
+                return ResponseEntity.notFound().build();
+            }
 
-                    return ResponseEntity.ok(converterParaResponse(atualizada));
-                })
-                .orElse(ResponseEntity.notFound().build());
+            celula.setNome(request.getNome());
+            celula.setTema(request.getTema());
+            celula.setQuando(request.getQuando());
+            celula.setOnde(request.getOnde());
+            celula.setLider(request.getLider());
+            celula.setCoLider(request.getCoLider());
+
+            Celula atualizada = celulaRepository.save(celula);
+
+            return ResponseEntity.ok(converterParaResponse(atualizada));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Erro ao atualizar célula: " + e.getMessage());
+        }
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
-        Celula celula = celulaRepository.findById(id).orElse(null);
+        try {
+            Celula celula = celulaRepository.findById(id).orElse(null);
 
-        if (celula == null) {
-            return ResponseEntity.notFound().build();
+            if (celula == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            List<Membro> membros = membroRepository.findByCelulaId(id);
+
+            for (Membro membro : membros) {
+                membro.setCelula(null);
+            }
+
+            membroRepository.saveAll(membros);
+            celulaRepository.delete(celula);
+
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Erro ao excluir célula: " + e.getMessage());
         }
-
-        List<Membro> membros = membroRepository.findByCelulaId(id);
-
-        for (Membro membro : membros) {
-            membro.setCelula(null);
-        }
-
-        membroRepository.saveAll(membros);
-        celulaRepository.delete(celula);
-
-        return ResponseEntity.noContent().build();
     }
 
     private CelulaResponse converterParaResponse(Celula celula) {
@@ -120,18 +143,22 @@ public class CelulaController {
         response.setLider(celula.getLider());
         response.setCoLider(celula.getCoLider());
 
-        List<MembroResumoResponse> membros = membroRepository
-                .findByCelulaId(celula.getId())
-                .stream()
-                .map(m -> {
-                    MembroResumoResponse r = new MembroResumoResponse();
-                    r.setId(m.getId());
-                    r.setNome(m.getNome());
-                    return r;
-                })
-                .toList();
+        try {
+            List<MembroResumoResponse> membros = membroRepository
+                    .findByCelulaId(celula.getId())
+                    .stream()
+                    .map(m -> {
+                        MembroResumoResponse r = new MembroResumoResponse();
+                        r.setId(m.getId());
+                        r.setNome(m.getNome());
+                        return r;
+                    })
+                    .toList();
 
-        response.setMembros(membros);
+            response.setMembros(membros);
+        } catch (Exception e) {
+            response.setMembros(List.of());
+        }
 
         return response;
     }
