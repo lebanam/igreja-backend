@@ -26,7 +26,7 @@ public class EscalaMinisterioService {
     }
 
     public List<EscalaMinisterioResponse> listarPorMinisterio(Long ministerioId) {
-        return escalaRepository.findByMinisterioIdOrderByDataAscHorarioAsc(ministerioId)
+        return escalaRepository.findByMinisterio_IdOrderByDataAscHorarioAsc(ministerioId)
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
