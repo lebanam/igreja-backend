@@ -86,8 +86,6 @@ public class InventarioService {
         item.setCategoria(categoria);
         item.setNome(request.getNome().trim());
         item.setQuantidade(normalizarNumero(request.getQuantidade()));
-        item.setQuantidadeMinima(normalizarNumero(request.getQuantidadeMinima()));
-        item.setLocalizacao(request.getLocalizacao());
         item.setObservacao(request.getObservacao());
 
         ItemInventario salvo = itemRepository.save(item);
@@ -124,8 +122,6 @@ public class InventarioService {
 
             item.setNome(request.getNome().trim());
             item.setQuantidade(normalizarNumero(request.getQuantidade()));
-            item.setQuantidadeMinima(normalizarNumero(request.getQuantidadeMinima()));
-            item.setLocalizacao(request.getLocalizacao());
             item.setObservacao(request.getObservacao());
 
             itensSalvos.add(itemRepository.save(item));
@@ -164,17 +160,11 @@ public class InventarioService {
     }
 
     private ItemInventarioResponse converterItemParaResponse(ItemInventario item) {
-        int quantidade = normalizarNumero(item.getQuantidade());
-        int minima = normalizarNumero(item.getQuantidadeMinima());
-
         return new ItemInventarioResponse(
                 item.getId(),
                 item.getNome(),
-                quantidade,
-                minima,
-                item.getLocalizacao(),
-                item.getObservacao(),
-                calcularStatus(quantidade, minima)
+                normalizarNumero(item.getQuantidade()),
+                item.getObservacao()
         );
     }
 
@@ -184,20 +174,5 @@ public class InventarioService {
         }
 
         return valor;
-    }
-
-    private String calcularStatus(Integer quantidade, Integer quantidadeMinima) {
-        int qtd = normalizarNumero(quantidade);
-        int minima = normalizarNumero(quantidadeMinima);
-
-        if (qtd == 0) {
-            return "SEM_ESTOQUE";
-        }
-
-        if (minima > 0 && qtd <= minima) {
-            return "BAIXO_ESTOQUE";
-        }
-
-        return "OK";
     }
 }
