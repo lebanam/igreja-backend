@@ -19,6 +19,8 @@ public class Celula {
 
     @OneToMany(mappedBy = "celula")
     private List<Membro> membros;
+    @OneToMany(mappedBy = "celula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RelatorioCelula> relatorios;
 
     public Long getId() { return id; }
     public String getNome() { return nome; }
@@ -28,6 +30,8 @@ public class Celula {
     public String getLider() { return lider; }
     public String getCoLider() { return coLider; }
     public List<Membro> getMembros() { return membros; }
+    public List<RelatorioCelula> getRelatorios() { return relatorios; }
+
 
     public void setId(Long id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
@@ -37,4 +41,5 @@ public class Celula {
     public void setLider(String lider) { this.lider = lider; }
     public void setCoLider(String coLider) { this.coLider = coLider; }
     public void setMembros(List<Membro> membros) { this.membros = membros; }
+    public void setRelatorios(List<RelatorioCelula> relatorios) { this.relatorios = relatorios; }
 }
