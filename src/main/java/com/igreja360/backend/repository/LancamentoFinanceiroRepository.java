@@ -9,6 +9,8 @@ import java.util.List;
 public interface LancamentoFinanceiroRepository
         extends JpaRepository<LancamentoFinanceiro, Long> {
 
+    List<LancamentoFinanceiro> findAllByOrderByDataDesc();
+
     List<LancamentoFinanceiro> findByDataBetween(
             LocalDate inicio,
             LocalDate fim
