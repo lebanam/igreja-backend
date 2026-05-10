@@ -20,6 +20,9 @@ import java.util.Locale;
 @Service
 public class DashboardService {
 
+    private static final String TIPO_ARRECADACAO = "ARRECADACAO";
+    private static final String TIPO_DESPESA = "DESPESA";
+
     private final MembroRepository membroRepository;
     private final CelulaRepository celulaRepository;
     private final MinisterioRepository ministerioRepository;
@@ -52,8 +55,8 @@ public class DashboardService {
         List<LancamentoFinanceiro> lancamentosMes =
                 lancamentoRepository.findByDataBetween(inicioMes, fimMes);
 
-        BigDecimal entradasMes = calcularTotalPorTipo(lancamentosMes, "RECEITA");
-        BigDecimal saidasMes = calcularTotalPorTipo(lancamentosMes, "DESPESA");
+        BigDecimal entradasMes = calcularTotalPorTipo(lancamentosMes, TIPO_ARRECADACAO);
+        BigDecimal saidasMes = calcularTotalPorTipo(lancamentosMes, TIPO_DESPESA);
         BigDecimal saldoMes = entradasMes.subtract(saidasMes);
 
         List<DashboardFinanceiroMesResponse> graficoFinanceiro =
@@ -126,8 +129,8 @@ public class DashboardService {
             List<LancamentoFinanceiro> lancamentos =
                     lancamentoRepository.findByDataBetween(inicio, fim);
 
-            BigDecimal entradas = calcularTotalPorTipo(lancamentos, "RECEITA");
-            BigDecimal saidas = calcularTotalPorTipo(lancamentos, "DESPESA");
+            BigDecimal entradas = calcularTotalPorTipo(lancamentos, TIPO_ARRECADACAO);
+            BigDecimal saidas = calcularTotalPorTipo(lancamentos, TIPO_DESPESA);
             BigDecimal saldo = entradas.subtract(saidas);
 
             dados.add(new DashboardFinanceiroMesResponse(
@@ -148,7 +151,10 @@ public class DashboardService {
         BigDecimal total = BigDecimal.ZERO;
 
         for (LancamentoFinanceiro lancamento : lancamentos) {
-            if (tipo.equalsIgnoreCase(lancamento.getTipo())) {
+            if (
+                    lancamento.getTipo() != null &&
+                            lancamento.getTipo().equalsIgnoreCase(tipo)
+            ) {
                 total = total.add(lancamento.getValor());
             }
         }
