@@ -1,12 +1,13 @@
 package com.igreja360.backend.service;
 
-import com.igreja360.backend.dto.DashboardFinanceiroMesResponse;
-import com.igreja360.backend.dto.DashboardResponse;
+import com.igreja360.backend.dto.*;
 import com.igreja360.backend.model.LancamentoFinanceiro;
+import com.igreja360.backend.model.RelatorioCelula;
 import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.LancamentoFinanceiroRepository;
 import com.igreja360.backend.repository.MembroRepository;
 import com.igreja360.backend.repository.MinisterioRepository;
+import com.igreja360.backend.repository.RelatorioCelulaRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,17 +24,20 @@ public class DashboardService {
     private final CelulaRepository celulaRepository;
     private final MinisterioRepository ministerioRepository;
     private final LancamentoFinanceiroRepository lancamentoRepository;
+    private final RelatorioCelulaRepository relatorioCelulaRepository;
 
     public DashboardService(
             MembroRepository membroRepository,
             CelulaRepository celulaRepository,
             MinisterioRepository ministerioRepository,
-            LancamentoFinanceiroRepository lancamentoRepository
+            LancamentoFinanceiroRepository lancamentoRepository,
+            RelatorioCelulaRepository relatorioCelulaRepository
     ) {
         this.membroRepository = membroRepository;
         this.celulaRepository = celulaRepository;
         this.ministerioRepository = ministerioRepository;
         this.lancamentoRepository = lancamentoRepository;
+        this.relatorioCelulaRepository = relatorioCelulaRepository;
     }
 
     public DashboardResponse buscarDashboard() {
@@ -55,6 +59,12 @@ public class DashboardService {
         List<DashboardFinanceiroMesResponse> graficoFinanceiro =
                 montarGraficoFinanceiroUltimosTresMeses();
 
+        DashboardMembrosCelulaResponse graficoMembrosCelula =
+                montarGraficoMembrosCelula();
+
+        List<DashboardVisitantesMesResponse> graficoVisitantes =
+                montarGraficoVisitantesUltimosTresMeses();
+
         return new DashboardResponse(
                 totalMembros,
                 totalCelulas,
@@ -62,8 +72,46 @@ public class DashboardService {
                 entradasMes,
                 saidasMes,
                 saldoMes,
-                graficoFinanceiro
+                graficoFinanceiro,
+                graficoMembrosCelula,
+                graficoVisitantes
         );
+    }
+
+    private DashboardMembrosCelulaResponse montarGraficoMembrosCelula() {
+        Long comCelula = membroRepository.countByCelulaIsNotNull();
+        Long semCelula = membroRepository.countByCelulaIsNull();
+
+        return new DashboardMembrosCelulaResponse(comCelula, semCelula);
+    }
+
+    private List<DashboardVisitantesMesResponse> montarGraficoVisitantesUltimosTresMeses() {
+        List<DashboardVisitantesMesResponse> dados = new ArrayList<>();
+        LocalDate hoje = LocalDate.now();
+
+        for (int i = 2; i >= 0; i--) {
+            LocalDate referencia = hoje.minusMonths(i);
+            LocalDate inicio = referencia.withDayOfMonth(1);
+            LocalDate fim = referencia.withDayOfMonth(referencia.lengthOfMonth());
+
+            List<RelatorioCelula> relatorios =
+                    relatorioCelulaRepository.findByDataEncontroBetween(inicio, fim);
+
+            int totalVisitantes = 0;
+
+            for (RelatorioCelula relatorio : relatorios) {
+                if (relatorio.getVisitantes() != null) {
+                    totalVisitantes += relatorio.getVisitantes();
+                }
+            }
+
+            dados.add(new DashboardVisitantesMesResponse(
+                    formatarMes(referencia),
+                    totalVisitantes
+            ));
+        }
+
+        return dados;
     }
 
     private List<DashboardFinanceiroMesResponse> montarGraficoFinanceiroUltimosTresMeses() {
@@ -82,15 +130,8 @@ public class DashboardService {
             BigDecimal saidas = calcularTotalPorTipo(lancamentos, "DESPESA");
             BigDecimal saldo = entradas.subtract(saidas);
 
-            String mes = referencia
-                    .getMonth()
-                    .getDisplayName(TextStyle.SHORT, new Locale("pt", "BR"))
-                    .replace(".", "");
-
-            mes = mes.substring(0, 1).toUpperCase() + mes.substring(1);
-
             dados.add(new DashboardFinanceiroMesResponse(
-                    mes,
+                    formatarMes(referencia),
                     entradas,
                     saidas,
                     saldo
@@ -113,5 +154,14 @@ public class DashboardService {
         }
 
         return total;
+    }
+
+    private String formatarMes(LocalDate data) {
+        String mes = data
+                .getMonth()
+                .getDisplayName(TextStyle.SHORT, new Locale("pt", "BR"))
+                .replace(".", "");
+
+        return mes.substring(0, 1).toUpperCase() + mes.substring(1);
     }
 }

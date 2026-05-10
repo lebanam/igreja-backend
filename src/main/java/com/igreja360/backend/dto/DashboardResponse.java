@@ -14,6 +14,8 @@ public class DashboardResponse {
     private BigDecimal saldoMes;
 
     private List<DashboardFinanceiroMesResponse> graficoFinanceiro;
+    private DashboardMembrosCelulaResponse graficoMembrosCelula;
+    private List<DashboardVisitantesMesResponse> graficoVisitantes;
 
     public DashboardResponse(
             Long totalMembros,
@@ -22,7 +24,9 @@ public class DashboardResponse {
             BigDecimal entradasMes,
             BigDecimal saidasMes,
             BigDecimal saldoMes,
-            List<DashboardFinanceiroMesResponse> graficoFinanceiro
+            List<DashboardFinanceiroMesResponse> graficoFinanceiro,
+            DashboardMembrosCelulaResponse graficoMembrosCelula,
+            List<DashboardVisitantesMesResponse> graficoVisitantes
     ) {
         this.totalMembros = totalMembros;
         this.totalCelulas = totalCelulas;
@@ -31,6 +35,8 @@ public class DashboardResponse {
         this.saidasMes = saidasMes;
         this.saldoMes = saldoMes;
         this.graficoFinanceiro = graficoFinanceiro;
+        this.graficoMembrosCelula = graficoMembrosCelula;
+        this.graficoVisitantes = graficoVisitantes;
     }
 
     public Long getTotalMembros() { return totalMembros; }
@@ -40,4 +46,6 @@ public class DashboardResponse {
     public BigDecimal getSaidasMes() { return saidasMes; }
     public BigDecimal getSaldoMes() { return saldoMes; }
     public List<DashboardFinanceiroMesResponse> getGraficoFinanceiro() { return graficoFinanceiro; }
+    public DashboardMembrosCelulaResponse getGraficoMembrosCelula() { return graficoMembrosCelula; }
+    public List<DashboardVisitantesMesResponse> getGraficoVisitantes() { return graficoVisitantes; }
 }

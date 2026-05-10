@@ -12,4 +12,8 @@ public interface MembroRepository extends JpaRepository<Membro, Long> {
     boolean existsByEmail(String email);
 
     List<Membro> findByCelulaId(Long celulaId);
+
+    Long countByCelulaIsNotNull();
+
+    Long countByCelulaIsNull();
 }
