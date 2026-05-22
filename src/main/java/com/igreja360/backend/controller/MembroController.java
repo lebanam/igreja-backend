@@ -5,8 +5,10 @@ import com.igreja360.backend.dto.MembroRequest;
 import com.igreja360.backend.dto.MembroResponse;
 import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
+import com.igreja360.backend.model.Usuario;
 import com.igreja360.backend.repository.CelulaRepository;
 import com.igreja360.backend.repository.MembroRepository;
+import com.igreja360.backend.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +24,16 @@ public class MembroController {
 
     private final MembroRepository membroRepository;
     private final CelulaRepository celulaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public MembroController(MembroRepository membroRepository, CelulaRepository celulaRepository) {
+    public MembroController(
+            MembroRepository membroRepository,
+            CelulaRepository celulaRepository,
+            UsuarioRepository usuarioRepository
+    ) {
         this.membroRepository = membroRepository;
         this.celulaRepository = celulaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
@@ -36,13 +44,18 @@ public class MembroController {
                 .toList();
     }
 
+    @GetMapping("/pendentes")
+    public List<MembroResponse> listarPendentes() {
+        return membroRepository.findAll()
+                .stream()
+                .filter(membro -> Boolean.FALSE.equals(membro.getCadastroAprovado()))
+                .map(this::converterParaResponse)
+                .toList();
+    }
+
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody MembroRequest request) {
-        if (membroRepository.existsByCpf(request.getCpf())) {
-            return ResponseEntity.badRequest().body("CPF já cadastrado");
-        }
-
-        if (membroRepository.existsByEmail(request.getEmail())) {
+        if (request.getEmail() != null && membroRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Email já cadastrado");
         }
 
@@ -59,6 +72,7 @@ public class MembroController {
         membro.setBatizado(request.getBatizado());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
+        membro.setCadastroAprovado(true);
 
         if (request.getCelulaId() != null) {
             Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
@@ -110,6 +124,67 @@ public class MembroController {
         Membro membroAtualizado = membroRepository.save(membro);
 
         return ResponseEntity.ok(converterParaResponse(membroAtualizado));
+    }
+
+    @PatchMapping("/{id}/aprovar")
+    public ResponseEntity<?> aprovarCadastro(
+            @PathVariable Long id,
+            @RequestBody MembroRequest request
+    ) {
+        Membro membro = membroRepository.findById(id).orElse(null);
+
+        if (membro == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        membro.setBatizado(request.getBatizado());
+        membro.setVoluntario(request.getVoluntario());
+        membro.setMembroDesde(request.getMembroDesde());
+        membro.setCadastroAprovado(true);
+
+        if (request.getCelulaId() != null) {
+            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
+
+            if (celula == null) {
+                return ResponseEntity.badRequest().body("Célula não encontrada");
+            }
+
+            membro.setCelula(celula);
+        } else {
+            membro.setCelula(null);
+        }
+
+        Membro membroAtualizado = membroRepository.save(membro);
+
+        Usuario usuario = usuarioRepository.findByEmail(membro.getEmail()).orElse(null);
+
+        if (usuario != null) {
+            usuario.setAtivo(true);
+            usuarioRepository.save(usuario);
+        }
+
+        return ResponseEntity.ok(converterParaResponse(membroAtualizado));
+    }
+
+    @PatchMapping("/{id}/reprovar")
+    public ResponseEntity<?> reprovarCadastro(@PathVariable Long id) {
+        Membro membro = membroRepository.findById(id).orElse(null);
+
+        if (membro == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(membro.getEmail()).orElse(null);
+
+        if (usuario != null) {
+            usuario.setAtivo(false);
+            usuarioRepository.save(usuario);
+        }
+
+        membro.setCadastroAprovado(false);
+        membroRepository.save(membro);
+
+        return ResponseEntity.ok("Cadastro reprovado");
     }
 
     @PatchMapping("/{id}/celula")
@@ -167,6 +242,9 @@ public class MembroController {
         dto.setSexo(membro.getSexo());
         dto.setEstadoCivil(membro.getEstadoCivil());
         dto.setEndereco(membro.getEndereco());
+        dto.setInstagram(membro.getInstagram());
+        dto.setTipoCadastro(membro.getTipoCadastro());
+        dto.setCadastroAprovado(membro.getCadastroAprovado());
 
         if (membro.getDataNascimento() != null) {
             dto.setIdade(Period.between(
