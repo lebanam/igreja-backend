@@ -60,6 +60,25 @@ public class AuthController {
         );
     }
 
+    @PatchMapping("/resetar-senha-admin")
+    public ResponseEntity<?> resetarSenhaAdmin() {
+        String emailAdmin = "admin@igreja360.com";
+
+        Usuario usuario = usuarioRepository.findByEmail(emailAdmin)
+                .orElse(null);
+
+        if (usuario == null) {
+            return ResponseEntity.badRequest().body("Usuário admin não encontrado");
+        }
+
+        usuario.setSenha(passwordEncoder.encode("123456"));
+        usuario.setAtivo(true);
+        usuario.setRole(Role.ADMIN);
+        usuarioRepository.save(usuario);
+
+        return ResponseEntity.ok("Senha do admin resetada para 123456");
+    }
+
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CadastroUsuarioRequest request) {
@@ -129,8 +148,6 @@ public class AuthController {
         membro.setTipoCadastro(tipoCadastro);
 
         membro.setCadastroAprovado(false);
-
-        // Campos administrativos, preenchidos posteriormente pelo ADMIN
         membro.setBatizado(false);
         membro.setVoluntario(false);
         membro.setMembroDesde(null);
@@ -142,10 +159,7 @@ public class AuthController {
         usuario.setEmail(emailNormalizado);
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(Role.MEMBRO);
-
-        // Usuário nasce inativo até aprovação do ADMIN
         usuario.setAtivo(false);
-
         usuario.setMembro(membro);
         usuario.setPrimeiroAcesso(true);
         usuario.setAvatarUrl(null);
