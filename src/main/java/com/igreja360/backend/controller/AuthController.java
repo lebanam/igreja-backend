@@ -60,7 +60,7 @@ public class AuthController {
         );
     }
 
-    @PatchMapping("/resetar-senha-admin")
+    @GetMapping("/resetar-senha-admin")
     public ResponseEntity<?> resetarSenhaAdmin() {
         String emailAdmin = "admin@igreja360.com";
 
