@@ -3,7 +3,6 @@ package com.igreja360.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "usuarios")
 public class Usuario {
 
     @Id
@@ -19,52 +18,35 @@ public class Usuario {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
-    private Boolean ativo = true;
+    private Boolean ativo;
 
-    public Long getId() {
-        return id;
-    }
+    private String avatarUrl;
 
-    public String getNome() {
-        return nome;
-    }
+    private Boolean primeiroAcesso;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    @OneToOne
+    @JoinColumn(name = "membro_id")
+    private Membro membro;
 
-    public String getEmail() {
-        return email;
-    }
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public String getEmail() { return email; }
+    public String getSenha() { return senha; }
+    public Role getRole() { return role; }
+    public Boolean getAtivo() { return ativo; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public Boolean getPrimeiroAcesso() { return primeiroAcesso; }
+    public Membro getMembro() { return membro; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setEmail(String email) { this.email = email; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public void setRole(Role role) { this.role = role; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public void setPrimeiroAcesso(Boolean primeiroAcesso) { this.primeiroAcesso = primeiroAcesso; }
+    public void setMembro(Membro membro) { this.membro = membro; }
 }

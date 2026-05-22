@@ -16,4 +16,5 @@ public interface MembroRepository extends JpaRepository<Membro, Long> {
     Long countByCelulaIsNotNull();
 
     Long countByCelulaIsNull();
+
 }
