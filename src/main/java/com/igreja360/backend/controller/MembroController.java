@@ -69,7 +69,10 @@ public class MembroController {
         membro.setSexo(request.getSexo());
         membro.setEstadoCivil(request.getEstadoCivil());
         membro.setEndereco(request.getEndereco());
+        membro.setInstagram(request.getInstagram());
+
         membro.setBatizado(request.getBatizado());
+        membro.setDataBatismo(request.getDataBatismo());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
         membro.setCadastroAprovado(true);
@@ -105,7 +108,10 @@ public class MembroController {
         membro.setSexo(request.getSexo());
         membro.setEstadoCivil(request.getEstadoCivil());
         membro.setEndereco(request.getEndereco());
+        membro.setInstagram(request.getInstagram());
+
         membro.setBatizado(request.getBatizado());
+        membro.setDataBatismo(request.getDataBatismo());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setVoluntario(request.getVoluntario());
 
@@ -138,6 +144,7 @@ public class MembroController {
         }
 
         membro.setBatizado(request.getBatizado());
+        membro.setDataBatismo(request.getDataBatismo());
         membro.setVoluntario(request.getVoluntario());
         membro.setMembroDesde(request.getMembroDesde());
         membro.setCadastroAprovado(true);
@@ -254,6 +261,7 @@ public class MembroController {
         }
 
         dto.setBatizado(membro.getBatizado());
+        dto.setDataBatismo(membro.getDataBatismo());
         dto.setMembroDesde(membro.getMembroDesde());
         dto.setVoluntario(membro.getVoluntario());
 

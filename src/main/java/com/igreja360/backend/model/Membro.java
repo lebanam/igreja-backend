@@ -38,6 +38,8 @@ public class Membro {
     // Campos administrativos: preenchidos/editados depois pelo ADMIN
     private Boolean batizado;
 
+    private LocalDate dataBatismo;
+
     private LocalDate membroDesde;
 
     private Boolean voluntario;
@@ -62,6 +64,7 @@ public class Membro {
     public TipoCadastro getTipoCadastro() { return tipoCadastro; }
     public Boolean getCadastroAprovado() { return cadastroAprovado; }
     public Boolean getBatizado() { return batizado; }
+    public LocalDate getDataBatismo() { return dataBatismo; }
     public LocalDate getMembroDesde() { return membroDesde; }
     public Boolean getVoluntario() { return voluntario; }
     public Celula getCelula() { return celula; }
@@ -80,6 +83,7 @@ public class Membro {
     public void setTipoCadastro(TipoCadastro tipoCadastro) { this.tipoCadastro = tipoCadastro; }
     public void setCadastroAprovado(Boolean cadastroAprovado) { this.cadastroAprovado = cadastroAprovado; }
     public void setBatizado(Boolean batizado) { this.batizado = batizado; }
+    public void setDataBatismo(LocalDate dataBatismo) { this.dataBatismo = dataBatismo; }
     public void setMembroDesde(LocalDate membroDesde) { this.membroDesde = membroDesde; }
     public void setVoluntario(Boolean voluntario) { this.voluntario = voluntario; }
     public void setCelula(Celula celula) { this.celula = celula; }

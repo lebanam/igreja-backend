@@ -32,7 +32,10 @@ public class MembroResponse {
 
     private Boolean cadastroAprovado;
 
+    // Dados administrativos
     private Boolean batizado;
+
+    private LocalDate dataBatismo;
 
     private LocalDate membroDesde;
 
@@ -94,6 +97,10 @@ public class MembroResponse {
 
     public Boolean getBatizado() {
         return batizado;
+    }
+
+    public LocalDate getDataBatismo() {
+        return dataBatismo;
     }
 
     public LocalDate getMembroDesde() {
@@ -162,6 +169,10 @@ public class MembroResponse {
 
     public void setBatizado(Boolean batizado) {
         this.batizado = batizado;
+    }
+
+    public void setDataBatismo(LocalDate dataBatismo) {
+        this.dataBatismo = dataBatismo;
     }
 
     public void setMembroDesde(LocalDate membroDesde) {
