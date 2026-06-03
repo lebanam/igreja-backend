@@ -3,6 +3,7 @@ package com.igreja360.backend.controller;
 import com.igreja360.backend.dto.CelulaResumoResponse;
 import com.igreja360.backend.dto.MembroRequest;
 import com.igreja360.backend.dto.MembroResponse;
+import com.igreja360.backend.dto.MembroResumoResponse;
 import com.igreja360.backend.model.Celula;
 import com.igreja360.backend.model.Membro;
 import com.igreja360.backend.model.Usuario;
@@ -61,30 +62,14 @@ public class MembroController {
 
         Membro membro = new Membro();
 
-        membro.setNome(request.getNome());
-        membro.setEmail(request.getEmail());
-        membro.setCpf(request.getCpf());
-        membro.setTelefone(request.getTelefone());
-        membro.setDataNascimento(request.getDataNascimento());
-        membro.setSexo(request.getSexo());
-        membro.setEstadoCivil(request.getEstadoCivil());
-        membro.setEndereco(request.getEndereco());
-        membro.setInstagram(request.getInstagram());
+        preencherDadosBasicos(membro, request);
+        preencherDadosAdministrativos(membro, request);
 
-        membro.setBatizado(request.getBatizado());
-        membro.setDataBatismo(request.getDataBatismo());
-        membro.setMembroDesde(request.getMembroDesde());
-        membro.setVoluntario(request.getVoluntario());
         membro.setCadastroAprovado(true);
 
-        if (request.getCelulaId() != null) {
-            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
-
-            if (celula == null) {
-                return ResponseEntity.badRequest().body("Célula não encontrada");
-            }
-
-            membro.setCelula(celula);
+        ResponseEntity<?> erroRelacionamentos = preencherRelacionamentos(membro, request);
+        if (erroRelacionamentos != null) {
+            return erroRelacionamentos;
         }
 
         Membro membroSalvo = membroRepository.save(membro);
@@ -100,31 +85,12 @@ public class MembroController {
             return ResponseEntity.notFound().build();
         }
 
-        membro.setNome(request.getNome());
-        membro.setEmail(request.getEmail());
-        membro.setCpf(request.getCpf());
-        membro.setTelefone(request.getTelefone());
-        membro.setDataNascimento(request.getDataNascimento());
-        membro.setSexo(request.getSexo());
-        membro.setEstadoCivil(request.getEstadoCivil());
-        membro.setEndereco(request.getEndereco());
-        membro.setInstagram(request.getInstagram());
+        preencherDadosBasicos(membro, request);
+        preencherDadosAdministrativos(membro, request);
 
-        membro.setBatizado(request.getBatizado());
-        membro.setDataBatismo(request.getDataBatismo());
-        membro.setMembroDesde(request.getMembroDesde());
-        membro.setVoluntario(request.getVoluntario());
-
-        if (request.getCelulaId() != null) {
-            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
-
-            if (celula == null) {
-                return ResponseEntity.badRequest().body("Célula não encontrada");
-            }
-
-            membro.setCelula(celula);
-        } else {
-            membro.setCelula(null);
+        ResponseEntity<?> erroRelacionamentos = preencherRelacionamentos(membro, request);
+        if (erroRelacionamentos != null) {
+            return erroRelacionamentos;
         }
 
         Membro membroAtualizado = membroRepository.save(membro);
@@ -143,23 +109,14 @@ public class MembroController {
             return ResponseEntity.notFound().build();
         }
 
-        membro.setBatizado(request.getBatizado());
-        membro.setDataBatismo(request.getDataBatismo());
-        membro.setVoluntario(request.getVoluntario());
-        membro.setMembroDesde(request.getMembroDesde());
-        membro.setCadastroAprovado(true);
+        preencherDadosAdministrativos(membro, request);
 
-        if (request.getCelulaId() != null) {
-            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
-
-            if (celula == null) {
-                return ResponseEntity.badRequest().body("Célula não encontrada");
-            }
-
-            membro.setCelula(celula);
-        } else {
-            membro.setCelula(null);
+        ResponseEntity<?> erroRelacionamentos = preencherRelacionamentos(membro, request);
+        if (erroRelacionamentos != null) {
+            return erroRelacionamentos;
         }
+
+        membro.setCadastroAprovado(true);
 
         Membro membroAtualizado = membroRepository.save(membro);
 
@@ -236,6 +193,91 @@ public class MembroController {
         return ResponseEntity.noContent().build();
     }
 
+    private void preencherDadosBasicos(Membro membro, MembroRequest request) {
+        membro.setNome(request.getNome());
+        membro.setEmail(request.getEmail());
+        membro.setCpf(request.getCpf());
+        membro.setTelefone(request.getTelefone());
+        membro.setDataNascimento(request.getDataNascimento());
+        membro.setSexo(request.getSexo());
+        membro.setEstadoCivil(request.getEstadoCivil());
+        membro.setEndereco(request.getEndereco());
+        membro.setInstagram(request.getInstagram());
+    }
+
+    private void preencherDadosAdministrativos(Membro membro, MembroRequest request) {
+        membro.setBatizado(Boolean.TRUE.equals(request.getBatizado()));
+        membro.setDataBatismo(Boolean.TRUE.equals(request.getBatizado()) ? request.getDataBatismo() : null);
+        membro.setMembroDesde(request.getMembroDesde());
+        membro.setVoluntario(Boolean.TRUE.equals(request.getVoluntario()));
+        membro.setMinisteriosVoluntario(
+                Boolean.TRUE.equals(request.getVoluntario())
+                        ? request.getMinisteriosVoluntario()
+                        : null
+        );
+        membro.setLiderCelula(Boolean.TRUE.equals(request.getLiderCelula()));
+        membro.setLiderMinisterio(Boolean.TRUE.equals(request.getLiderMinisterio()));
+    }
+
+    private ResponseEntity<?> preencherRelacionamentos(Membro membro, MembroRequest request) {
+        if (request.getCelulaId() != null) {
+            Celula celula = celulaRepository.findById(request.getCelulaId()).orElse(null);
+
+            if (celula == null) {
+                return ResponseEntity.badRequest().body("Célula não encontrada");
+            }
+
+            membro.setCelula(celula);
+        } else {
+            membro.setCelula(null);
+        }
+
+        if (request.getPaiId() != null) {
+            Membro pai = membroRepository.findById(request.getPaiId()).orElse(null);
+
+            if (pai == null) {
+                return ResponseEntity.badRequest().body("Pai não encontrado");
+            }
+
+            membro.setPai(pai);
+        } else {
+            membro.setPai(null);
+        }
+
+        if (request.getMaeId() != null) {
+            Membro mae = membroRepository.findById(request.getMaeId()).orElse(null);
+
+            if (mae == null) {
+                return ResponseEntity.badRequest().body("Mãe não encontrada");
+            }
+
+            membro.setMae(mae);
+        } else {
+            membro.setMae(null);
+        }
+
+        if (request.getConjugeId() != null) {
+            Membro conjuge = membroRepository.findById(request.getConjugeId()).orElse(null);
+
+            if (conjuge == null) {
+                return ResponseEntity.badRequest().body("Cônjuge não encontrado");
+            }
+
+            membro.setConjuge(conjuge);
+        } else {
+            membro.setConjuge(null);
+        }
+
+        if (request.getFilhosIds() != null && !request.getFilhosIds().isEmpty()) {
+            List<Membro> filhos = membroRepository.findAllById(request.getFilhosIds());
+            membro.setFilhos(filhos);
+        } else {
+            membro.setFilhos(List.of());
+        }
+
+        return null;
+    }
+
     private MembroResponse converterParaResponse(Membro membro) {
         MembroResponse dto = new MembroResponse();
 
@@ -264,6 +306,9 @@ public class MembroController {
         dto.setDataBatismo(membro.getDataBatismo());
         dto.setMembroDesde(membro.getMembroDesde());
         dto.setVoluntario(membro.getVoluntario());
+        dto.setMinisteriosVoluntario(membro.getMinisteriosVoluntario());
+        dto.setLiderCelula(membro.getLiderCelula());
+        dto.setLiderMinisterio(membro.getLiderMinisterio());
 
         if (membro.getCelula() != null) {
             dto.setCelula(new CelulaResumoResponse(
@@ -272,6 +317,32 @@ public class MembroController {
             ));
         }
 
+        dto.setPai(converterParaResumo(membro.getPai()));
+        dto.setMae(converterParaResumo(membro.getMae()));
+        dto.setConjuge(converterParaResumo(membro.getConjuge()));
+
+        if (membro.getFilhos() != null) {
+            dto.setFilhos(
+                    membro.getFilhos()
+                            .stream()
+                            .map(this::converterParaResumo)
+                            .toList()
+            );
+        } else {
+            dto.setFilhos(List.of());
+        }
+
         return dto;
+    }
+
+    private MembroResumoResponse converterParaResumo(Membro membro) {
+        if (membro == null) {
+            return null;
+        }
+
+        return new MembroResumoResponse(
+                membro.getId(),
+                membro.getNome()
+        );
     }
 }

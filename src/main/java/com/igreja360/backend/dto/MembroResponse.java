@@ -3,6 +3,7 @@ package com.igreja360.backend.dto;
 import com.igreja360.backend.model.TipoCadastro;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class MembroResponse {
 
@@ -41,7 +42,22 @@ public class MembroResponse {
 
     private Boolean voluntario;
 
+    private String ministeriosVoluntario;
+
+    private Boolean liderCelula;
+
+    private Boolean liderMinisterio;
+
     private CelulaResumoResponse celula;
+
+    // Família
+    private MembroResumoResponse pai;
+
+    private MembroResumoResponse mae;
+
+    private MembroResumoResponse conjuge;
+
+    private List<MembroResumoResponse> filhos;
 
     public Long getId() {
         return id;
@@ -111,8 +127,36 @@ public class MembroResponse {
         return voluntario;
     }
 
+    public String getMinisteriosVoluntario() {
+        return ministeriosVoluntario;
+    }
+
+    public Boolean getLiderCelula() {
+        return liderCelula;
+    }
+
+    public Boolean getLiderMinisterio() {
+        return liderMinisterio;
+    }
+
     public CelulaResumoResponse getCelula() {
         return celula;
+    }
+
+    public MembroResumoResponse getPai() {
+        return pai;
+    }
+
+    public MembroResumoResponse getMae() {
+        return mae;
+    }
+
+    public MembroResumoResponse getConjuge() {
+        return conjuge;
+    }
+
+    public List<MembroResumoResponse> getFilhos() {
+        return filhos;
     }
 
     public void setId(Long id) {
@@ -183,7 +227,35 @@ public class MembroResponse {
         this.voluntario = voluntario;
     }
 
+    public void setMinisteriosVoluntario(String ministeriosVoluntario) {
+        this.ministeriosVoluntario = ministeriosVoluntario;
+    }
+
+    public void setLiderCelula(Boolean liderCelula) {
+        this.liderCelula = liderCelula;
+    }
+
+    public void setLiderMinisterio(Boolean liderMinisterio) {
+        this.liderMinisterio = liderMinisterio;
+    }
+
     public void setCelula(CelulaResumoResponse celula) {
         this.celula = celula;
+    }
+
+    public void setPai(MembroResumoResponse pai) {
+        this.pai = pai;
+    }
+
+    public void setMae(MembroResumoResponse mae) {
+        this.mae = mae;
+    }
+
+    public void setConjuge(MembroResumoResponse conjuge) {
+        this.conjuge = conjuge;
+    }
+
+    public void setFilhos(List<MembroResumoResponse> filhos) {
+        this.filhos = filhos;
     }
 }
