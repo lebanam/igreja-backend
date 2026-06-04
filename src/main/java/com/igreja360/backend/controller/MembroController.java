@@ -196,7 +196,6 @@ public class MembroController {
     private void preencherDadosBasicos(Membro membro, MembroRequest request) {
         membro.setNome(request.getNome());
         membro.setEmail(request.getEmail());
-        membro.setCpf(request.getCpf());
         membro.setTelefone(request.getTelefone());
         membro.setDataNascimento(request.getDataNascimento());
         membro.setSexo(request.getSexo());
@@ -284,7 +283,6 @@ public class MembroController {
         dto.setId(membro.getId());
         dto.setNome(membro.getNome());
         dto.setEmail(membro.getEmail());
-        dto.setCpf(membro.getCpf());
         dto.setTelefone(membro.getTelefone());
 
         dto.setDataNascimento(membro.getDataNascimento());

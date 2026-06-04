@@ -7,7 +7,6 @@ public class MembroRequest {
 
     private String nome;
     private String email;
-    private String cpf;
     private String telefone;
 
     private LocalDate dataNascimento;
@@ -45,9 +44,6 @@ public class MembroRequest {
         return email;
     }
 
-    public String getCpf() {
-        return cpf;
-    }
 
     public String getTelefone() {
         return telefone;
@@ -137,9 +133,6 @@ public class MembroRequest {
         this.email = email;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;

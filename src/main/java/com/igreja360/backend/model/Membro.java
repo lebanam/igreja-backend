@@ -17,8 +17,6 @@ public class Membro {
     @Column(unique = true)
     private String email;
 
-    private String cpf;
-
     private String telefone;
 
     private LocalDate dataNascimento;
@@ -82,7 +80,6 @@ public class Membro {
     public Long getId() { return id; }
     public String getNome() { return nome; }
     public String getEmail() { return email; }
-    public String getCpf() { return cpf; }
     public String getTelefone() { return telefone; }
     public LocalDate getDataNascimento() { return dataNascimento; }
     public String getSexo() { return sexo; }
@@ -108,7 +105,6 @@ public class Membro {
     public void setId(Long id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setEmail(String email) { this.email = email; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
     public void setSexo(String sexo) { this.sexo = sexo; }
